@@ -1,0 +1,16 @@
+# Local data
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+backups/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local environments and secrets
+.env
+.venv/
+venv/
+.streamlit/secrets.toml
