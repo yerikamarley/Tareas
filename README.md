@@ -1,53 +1,47 @@
+# Gestora de Tareas
 
+Aplicacion Streamlit para gestionar tareas, subtareas, comentarios, prioridades, bloqueos y exportacion a CSV.
 
-## Requisitos
+## Archivos importantes
 
-- Python 3.10 o superior
+- `streamlit_app.py`: entrada recomendada para Streamlit Community Cloud.
+- `app.py`: aplicacion principal.
+- `database.py`: funciones de SQLite.
+- `requirements.txt`: dependencias de Python para Cloud.
+- `tareas.db`: base local. No debe subirse a GitHub si contiene datos reales.
 
-## Instalación
-
-Abre una terminal dentro de la carpeta del proyecto y ejecuta:
+## Ejecutar localmente
 
 ```bash
 pip install -r requirements.txt
+streamlit run streamlit_app.py
 ```
 
-## Ejecutar
+Tambien puedes ejecutar:
 
 ```bash
 streamlit run app.py
 ```
 
-## Despliegue seguro en Streamlit Community Cloud
+## Desplegar sin afectar tu data
 
-- Usa `streamlit_app.py` como archivo principal del despliegue, o `app.py` si lo configuras manualmente.
-- No subas tu `tareas.db` real a GitHub si contiene datos personales. La app puede crear una base nueva vacia en el despliegue.
-- Antes de publicar, saca la base local del seguimiento de Git sin borrarla de tu carpeta:
+1. Verifica que `tareas.db` tenga respaldo en `backups/`.
+2. No subas `tareas.db`, `backups/` ni `__pycache__/`.
+3. En Streamlit Cloud usa `streamlit_app.py` como main file path.
+4. Si Cloud muestra errores viejos, entra en Manage app y usa Reboot app.
+
+Si `tareas.db` o `__pycache__` ya aparecen en GitHub, quitalos del seguimiento sin borrarlos de tu PC:
 
 ```bash
 git rm --cached tareas.db
 git rm -r --cached __pycache__
-git add .gitignore streamlit_app.py README.md
-git commit -m "Preparar despliegue seguro de Streamlit"
+git add .gitignore README.md streamlit_app.py app.py requirements.txt database.py utils.py cargar_datos_ejemplo.py
+git commit -m "Preparar despliegue limpio"
 git push
 ```
 
-Nota: Streamlit Community Cloud no garantiza persistencia de archivos locales. Para conservar datos reales en produccion, usa una base externa o guarda/exporta respaldos regularmente.
+Si tu terminal no reconoce `git`, haz lo mismo desde VS Code Source Control o GitHub Desktop: elimina `tareas.db` y `__pycache__` del repositorio remoto, pero conserva esos archivos en tu carpeta local.
 
-## Funcionalidades incluidas
+## Persistencia
 
-- Crear tareas
-- Clasificar por importante y urgente
-- Prioridad automática
-- Estados: Sin iniciar, En proceso, En espera, Finalizado
-- Bloqueos por cliente, proveedor, infraestructura, aprobación, información u otra área
-- Dashboard con métricas
-- Tablero Kanban
-- Gestión de subtareas
-- Comentarios tipo bitácora
-- Edición rápida de tareas
-- Exportación a CSV
-
-## Base de datos
-
-La aplicación crea automáticamente el archivo `tareas.db` al ejecutarse.
+SQLite local funciona bien en tu computador. En Streamlit Community Cloud, los archivos locales no son almacenamiento permanente garantizado. Para datos reales en produccion, usa una base externa o exporta respaldos con frecuencia.

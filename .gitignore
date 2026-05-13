@@ -4,13 +4,24 @@
 *.db-shm
 *.db-wal
 backups/
+exports/
 
 # Python cache
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Local environments and secrets
 .env
+.env.*
 .venv/
 venv/
 .streamlit/secrets.toml
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
