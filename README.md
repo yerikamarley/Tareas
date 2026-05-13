@@ -28,7 +28,8 @@ streamlit run app.py
 1. Verifica que `tareas.db` tenga respaldo en `backups/`.
 2. No subas `tareas.db`, `backups/` ni `__pycache__/`.
 3. En Streamlit Cloud usa `streamlit_app.py` como main file path.
-4. Si Cloud muestra errores viejos, entra en Manage app y usa Reboot app.
+4. En Advanced settings selecciona Python `3.12`.
+5. Si Cloud muestra errores viejos, entra en Manage app y usa Reboot app.
 
 Si `tareas.db` o `__pycache__` ya aparecen en GitHub, quitalos del seguimiento sin borrarlos de tu PC:
 

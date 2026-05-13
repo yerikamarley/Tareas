@@ -29,5 +29,11 @@
 
 1. App settings o Deploy settings.
 2. Main file path: `streamlit_app.py`.
-3. Si sigue mostrando un error anterior, usa Manage app -> Reboot app.
-4. Si el error menciona una libreria faltante, revisa que `requirements.txt` este en GitHub.
+3. Python version: `3.12`.
+4. Si la app ya fue creada con otra version de Python, elimina esa app en Streamlit Cloud y creala de nuevo con Python `3.12`; un simple reboot no siempre cambia Python.
+5. Si sigue mostrando un error anterior, usa Manage app -> Reboot app.
+6. Si el error menciona una libreria faltante, revisa que `requirements.txt` este en GitHub.
+
+## Senal de instalacion lenta
+
+Si los logs dicen `Using Python 3.14` y luego `Downloading pandas...tar.gz` o `Installing build dependencies`, Cloud esta compilando paquetes desde fuente. Para esta app conviene Python `3.12`, porque las dependencias fijadas en `requirements.txt` tienen mejor compatibilidad ahi.
