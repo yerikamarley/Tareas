@@ -1,7 +1,9 @@
-"""Streamlit Community Cloud entrypoint.
+"""Streamlit Community Cloud entrypoint."""
 
-Keep the main application in app.py for local use while allowing deployments
-that expect streamlit_app.py to run the same code.
-"""
+from pathlib import Path
+import runpy
 
-import app  # noqa: F401
+
+APP_PATH = Path(__file__).with_name("app.py")
+
+runpy.run_path(str(APP_PATH), run_name="__main__")
