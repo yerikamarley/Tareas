@@ -1,5 +1,6 @@
 # Local data
 *.db
+!seed_tareas.db
 *.db-journal
 *.db-shm
 *.db-wal

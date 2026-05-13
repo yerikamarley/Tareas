@@ -5,6 +5,7 @@
 - `requirements.txt` debe estar en la raiz.
 - `streamlit_app.py` debe estar en la raiz.
 - `tareas.db` debe quedarse local, no en GitHub.
+- `seed_tareas.db` se puede subir si quieres ver una copia de tus datos en Cloud.
 - `backups/` debe quedarse local, no en GitHub.
 - `__pycache__/` debe quedarse fuera de GitHub.
 
@@ -17,6 +18,7 @@
    - `DEPLOY.md`
    - `streamlit_app.py`
    - `app.py`
+   - `seed_tareas.db` si quieres que Cloud arranque con una copia de tu data
    - `requirements.txt`
    - `database.py`
    - `utils.py`

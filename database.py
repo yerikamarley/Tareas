@@ -1,11 +1,38 @@
 import sqlite3
+import shutil
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "tareas.db"
+BASE_DIR = Path(__file__).parent
+DB_PATH = BASE_DIR / "tareas.db"
+SEED_DB_PATH = BASE_DIR / "seed_tareas.db"
+
+
+def database_has_tasks(path: Path) -> bool:
+    if not path.exists():
+        return False
+
+    try:
+        conn = sqlite3.connect(path)
+        count = conn.execute("SELECT COUNT(*) FROM tasks").fetchone()[0]
+        conn.close()
+        return count > 0
+    except sqlite3.Error:
+        return False
+
+
+def ensure_database_file():
+    if not SEED_DB_PATH.exists():
+        return
+
+    if database_has_tasks(DB_PATH):
+        return
+
+    shutil.copyfile(SEED_DB_PATH, DB_PATH)
 
 
 def get_connection():
+    ensure_database_file()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn

@@ -9,6 +9,7 @@ Aplicacion Streamlit para gestionar tareas, subtareas, comentarios, prioridades,
 - `database.py`: funciones de SQLite.
 - `requirements.txt`: dependencias de Python para Cloud.
 - `tareas.db`: base local. No debe subirse a GitHub si contiene datos reales.
+- `seed_tareas.db`: copia opcional para que Cloud arranque con datos iniciales.
 
 ## Ejecutar localmente
 
@@ -30,6 +31,8 @@ streamlit run app.py
 3. En Streamlit Cloud usa `streamlit_app.py` como main file path.
 4. En Advanced settings selecciona Python `3.12`.
 5. Si Cloud muestra errores viejos, entra en Manage app y usa Reboot app.
+
+Si quieres ver una copia de tu data en Cloud, sube `seed_tareas.db`. La app copiara esa semilla a `tareas.db` cuando el servidor arranque sin datos. No es persistencia real: los cambios hechos en Cloud pueden perderse al reiniciar o redesplegar.
 
 Si `tareas.db` o `__pycache__` ya aparecen en GitHub, quitalos del seguimiento sin borrarlos de tu PC:
 
