@@ -1,8 +1,10 @@
 import sys
+import os
 from pathlib import Path
 
-# Agregar la carpeta gestora_tareas_yerika al path para importar los módulos
+# Cambiar al directorio de la app
+os.chdir(Path(__file__).parent / "gestora_tareas_yerika")
 sys.path.insert(0, str(Path(__file__).parent / "gestora_tareas_yerika"))
 
-# Importar y ejecutar la aplicación principal
-from app import *
+# Ejecutar la aplicación principal
+exec(open("app.py").read())
