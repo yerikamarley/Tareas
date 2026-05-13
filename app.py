@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+try:
+    import plotly.express as px
+except ImportError:
+    px = None
 from datetime import date, datetime, timedelta
 from html import escape
 
@@ -127,6 +130,52 @@ def show_flash_message():
 
 
 show_flash_message()
+
+
+def render_bar_chart(dataframe: pd.DataFrame, title: str, x: str, y: str, **kwargs):
+    if px is not None:
+        fig = px.bar(dataframe, x=x, y=y, title=title, **kwargs)
+        st.plotly_chart(fig, use_container_width=True)
+        return
+
+    st.caption(f"{title} (vista simple)")
+    if dataframe.empty:
+        st.info("Sin datos para graficar.")
+        return
+
+    orientation = kwargs.get("orientation", "v")
+    color = kwargs.get("color")
+
+    if color and color in dataframe.columns:
+        index_col = y if orientation == "h" else x
+        value_col = x if orientation == "h" else y
+        chart_data = dataframe.pivot_table(
+            index=index_col,
+            columns=color,
+            values=value_col,
+            aggfunc="sum",
+            fill_value=0,
+        )
+    else:
+        index_col = y if orientation == "h" else x
+        value_col = x if orientation == "h" else y
+        chart_data = dataframe.set_index(index_col)[value_col]
+
+    st.bar_chart(chart_data)
+
+
+def render_pie_chart(dataframe: pd.DataFrame, title: str, names: str, values: str):
+    if px is not None:
+        fig = px.pie(dataframe, names=names, values=values, title=title)
+        st.plotly_chart(fig, use_container_width=True)
+        return
+
+    st.caption(f"{title} (vista simple)")
+    if dataframe.empty:
+        st.info("Sin datos para graficar.")
+        return
+
+    st.bar_chart(dataframe.set_index(names)[values])
 
 
 TASK_FORM_FIELDS = [
@@ -544,21 +593,18 @@ if menu == "Dashboard":
 
         with col_a:
             status_count = df.groupby("status").size().reset_index(name="total")
-            fig = px.bar(status_count, x="status", y="total", title="Tareas por estado", text="total")
-            st.plotly_chart(fig, use_container_width=True)
+            render_bar_chart(status_count, "Tareas por estado", x="status", y="total", text="total")
 
         with col_b:
             priority_count = df.groupby("priority").size().reset_index(name="total")
             priority_count["order"] = priority_count["priority"].map(PRIORITY_ORDER)
             priority_count = priority_count.sort_values("order")
-            fig = px.pie(priority_count, names="priority", values="total", title="Tareas por prioridad")
-            st.plotly_chart(fig, use_container_width=True)
+            render_pie_chart(priority_count, "Tareas por prioridad", names="priority", values="total")
 
         col_c, col_d = st.columns(2)
         with col_c:
             category_count = df.groupby("category").size().reset_index(name="total").sort_values("total", ascending=True)
-            fig = px.bar(category_count, x="total", y="category", orientation="h", title="Tareas por categoría", text="total")
-            st.plotly_chart(fig, use_container_width=True)
+            render_bar_chart(category_count, "Tareas por categoría", x="total", y="category", orientation="h", text="total")
 
         with col_d:
             blockers = df[df["blocker_type"] != "Sin bloqueo"]
@@ -566,8 +612,7 @@ if menu == "Dashboard":
                 st.success("No tienes tareas bloqueadas actualmente.")
             else:
                 blocker_count = blockers.groupby("blocker_type").size().reset_index(name="total")
-                fig = px.bar(blocker_count, x="blocker_type", y="total", title="Tareas bloqueadas por dependencia", text="total")
-                st.plotly_chart(fig, use_container_width=True)
+                render_bar_chart(blocker_count, "Tareas bloqueadas por dependencia", x="blocker_type", y="total", text="total")
 
         st.subheader("Carga real de trabajo")
         if workload_df.empty:
@@ -582,14 +627,14 @@ if menu == "Dashboard":
             col_e, col_f = st.columns(2)
             with col_e:
                 top_workload = active_task_workload.head(10).sort_values("workload_units", ascending=True)
-                fig = px.bar(
+                render_bar_chart(
                     top_workload,
+                    "Tareas con más carga pendiente",
                     x="workload_units",
                     y="display_title",
                     color="priority",
                     orientation="h",
                     text="workload_units",
-                    title="Tareas con más carga pendiente",
                     labels={
                         "workload_units": "Carga pendiente",
                         "display_title": "Tarea",
@@ -597,7 +642,6 @@ if menu == "Dashboard":
                     },
                     hover_data=["subtasks_pending", "subtasks_total", "subtask_completion", "due_date"],
                 )
-                st.plotly_chart(fig, use_container_width=True)
 
             with col_f:
                 category_workload = (
@@ -606,32 +650,31 @@ if menu == "Dashboard":
                     .reset_index(name="total")
                     .sort_values("total", ascending=True)
                 )
-                fig = px.bar(
+                render_bar_chart(
                     category_workload,
+                    "Carga real por categoría",
                     x="total",
                     y="category",
                     color="item_type",
                     orientation="h",
                     text="total",
-                    title="Carga real por categoría",
                     labels={
                         "total": "Pendientes",
                         "category": "Categoría",
                         "item_type": "Tipo",
                     },
                 )
-                st.plotly_chart(fig, use_container_width=True)
 
             col_g, col_h = st.columns(2)
             with col_g:
                 status_workload = workload_df.groupby(["status", "item_type"]).size().reset_index(name="total")
-                fig = px.bar(
+                render_bar_chart(
                     status_workload,
+                    "Carga real por estado",
                     x="status",
                     y="total",
                     color="item_type",
                     text="total",
-                    title="Carga real por estado",
                     labels={
                         "status": "Estado",
                         "total": "Pendientes",
@@ -639,17 +682,16 @@ if menu == "Dashboard":
                     },
                     category_orders={"status": STATUSES},
                 )
-                st.plotly_chart(fig, use_container_width=True)
 
             with col_h:
                 priority_workload = workload_df.groupby(["priority", "item_type"]).size().reset_index(name="total")
-                fig = px.bar(
+                render_bar_chart(
                     priority_workload,
+                    "Carga real por prioridad",
                     x="priority",
                     y="total",
                     color="item_type",
                     text="total",
-                    title="Carga real por prioridad",
                     labels={
                         "priority": "Prioridad",
                         "total": "Pendientes",
@@ -657,7 +699,6 @@ if menu == "Dashboard":
                     },
                     category_orders={"priority": ["Crítica", "Alta", "Media", "Baja"]},
                 )
-                st.plotly_chart(fig, use_container_width=True)
 
             workload_table = active_task_workload[
                 [
