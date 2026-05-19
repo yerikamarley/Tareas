@@ -44,8 +44,3 @@ git commit -m "Preparar despliegue limpio"
 git push
 ```
 
-Si tu terminal no reconoce `git`, haz lo mismo desde VS Code Source Control o GitHub Desktop: elimina `tareas.db` y `__pycache__` del repositorio remoto, pero conserva esos archivos en tu carpeta local.
-
-## Persistencia
-
-SQLite local funciona bien en tu computador. En Streamlit Community Cloud, los archivos locales no son almacenamiento permanente garantizado. Para datos reales en produccion, usa una base externa o exporta respaldos con frecuencia.
